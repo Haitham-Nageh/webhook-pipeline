@@ -1,9 +1,4 @@
-import { UUID } from './common'
-
-export type ProcessingType =
-  | 'metadata_enrichment'
-  | 'sensitive_field_redaction'
-  | 'event_annotation'
+import { UUID, ProcessingType } from './common'
 
 export interface Pipeline {
   id: UUID
@@ -27,7 +22,8 @@ export interface CreatePipelineInput {
   name: string
   processingType: ProcessingType
   config?: Record<string, unknown>
-  subscribers: string[]    
+  subscribers: string[]
+  isActive?: boolean
 }
 
 export interface UpdatePipelineInput {

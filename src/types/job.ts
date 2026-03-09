@@ -1,8 +1,4 @@
-import { UUID } from './common'
-
-export type JobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
-
-export type DeliveryStatus = 'SUCCESS' | 'FAILED'
+import { UUID, JobStatus, DeliveryStatus, PaginationQuery } from './common'
 
 export interface Job {
   id: UUID
@@ -31,4 +27,13 @@ export interface DeliveryAttempt {
 
 export interface JobWithDeliveries extends Job {
   deliveryAttempts: DeliveryAttempt[]
+}
+
+export interface JobsQuery extends PaginationQuery {
+  status?: JobStatus
+}
+
+export interface PipelineJobsQuery extends PaginationQuery {
+  status?: JobStatus
+  pipelineId?: UUID
 }
