@@ -1,0 +1,355 @@
+https://chatgpt.com/share/69ab4ddb-7ecc-8005-876a-dce0b674cabd
+--
+https://chatgpt.com/share/69ab4ddb-7ecc-8005-876a-dce0b674cabd
+--
+File Structure Notes
+
+server.ts لتشغيل الـ API
+
+worker.ts لتشغيل الـ worker
+
+routes/ لتعريف endpoints
+
+controllers/ لاستقبال الطلبات وإرجاع الردود
+
+services/ لمنطق المشروع
+
+actions/ لأنواع المعالجة
+
+repositories/ للتعامل مع قاعدة البيانات
+
+schemas/ للتحقق من المدخلات
+
+lib/ للأدوات المشتركة
+
+utils/ للدوال المساعدة
+
+Tech Stack Notes
+
+Express لبناء REST API
+
+PostgreSQL لتخزين البيانات
+
+Prisma للتعامل مع قاعدة البيانات
+
+Zod للتحقق من المدخلات
+
+Axios لإرسال النتائج إلى subscribers
+
+Docker Compose لتشغيل المشروع
+
+GitHub Actions للـ CI
+
+Vitest للاختبارات
+----------------------------------------
+Full File Structure:
+
+webhook-pipeline-project/
+│
+├─ src/
+│  ├─ app.ts
+│  ├─ server.ts
+│  ├─ worker.ts
+│  │
+│  ├─ config/
+│  │  ├─ env.ts
+│  │  └─ constants.ts
+│  │
+│  ├─ routes/
+│  │  ├─ pipeline.routes.ts
+│  │  ├─ webhook.routes.ts
+│  │  └─ job.routes.ts
+│  │
+│  ├─ controllers/
+│  │  ├─ pipeline.controller.ts
+│  │  ├─ webhook.controller.ts
+│  │  └─ job.controller.ts
+│  │
+│  ├─ services/
+│  │  ├─ pipeline.service.ts
+│  │  ├─ webhook.service.ts
+│  │  ├─ job.service.ts
+│  │  ├─ processing.service.ts
+│  │  └─ delivery.service.ts
+│  │
+│  ├─ actions/
+│  │  ├─ add-timestamp.action.ts
+│  │  ├─ filter-fields.action.ts
+│  │  └─ transform-payload.action.ts
+│  │
+│  ├─ repositories/
+│  │  ├─ pipeline.repository.ts
+│  │  ├─ job.repository.ts
+│  │  ├─ subscriber.repository.ts
+│  │  └─ delivery-attempt.repository.ts
+│  │
+│  ├─ lib/
+│  │  ├─ prisma.ts
+│  │  ├─ axios.ts
+│  │  └─ logger.ts
+│  │
+│  ├─ middleware/
+│  │  ├─ error-handler.ts
+│  │  └─ validate.ts
+│  │
+│  ├─ schemas/
+│  │  ├─ pipeline.schema.ts
+│  │  ├─ webhook.schema.ts
+│  │  └─ job.schema.ts
+│  │
+│  ├─ types/
+│  │  ├─ pipeline.types.ts
+│  │  ├─ job.types.ts
+│  │  └─ common.types.ts
+│  │
+│  └─ utils/
+│     ├─ retry.ts
+│     ├─ sleep.ts
+│     └─ safe-json.ts
+│
+├─ prisma/
+│  ├─ schema.prisma
+│  └─ migrations/
+│
+├─ tests/
+│  ├─ pipeline.test.ts
+│  ├─ webhook.test.ts
+│  └─ worker.test.ts
+│
+├─ .github/
+│  └─ workflows/
+│     └─ ci.yml
+│
+├─ docker/
+│  ├─ api.Dockerfile
+│  └─ worker.Dockerfile
+│
+├─ docker-compose.yml
+├─ package.json
+├─ tsconfig.json
+├─ .env
+├─ .env.example
+├─ .gitignore
+├─ .eslintrc.cjs
+├─ .prettierrc
+└─ README.md
+------------------------------------
+نشرح كل جزء ببساطة
+src/app.ts
+
+فيه إعدادات express:
+
+middlewares
+
+routes
+
+error handler
+
+src/server.ts
+
+هذا الملف يشغل الـ API server
+
+يعني:
+
+يعمل listen على port
+
+src/worker.ts
+
+هذا الملف يشغل الـ worker
+
+يعني:
+
+loop أو polling
+
+يجيب jobs pending
+
+ينفذها
+
+config/
+
+للأشياء العامة مثل:
+
+environment variables
+
+constants
+
+retry limits
+
+timeouts
+
+routes/
+
+تعريف المسارات فقط
+
+مثلاً:
+
+/pipelines
+
+/webhooks/:id
+
+/jobs/:id
+
+controllers/
+
+تستقبل الطلب والرد
+
+يعني controller لا يحتوي business logic كثير
+فقط:
+
+يأخذ request
+
+يستدعي service
+
+يرجع response
+
+services/
+
+هذا أهم جزء
+هنا المنطق الحقيقي للمشروع
+
+مثلاً:
+
+pipeline.service.ts
+
+إنشاء pipeline
+
+تعديلها
+
+حذفها
+
+webhook.service.ts
+
+استقبال webhook
+
+إنشاء job
+
+job.service.ts
+
+قراءة حالة job
+
+عرض history
+
+processing.service.ts
+
+اختيار الـ action المناسبة وتنفيذها
+
+delivery.service.ts
+
+إرسال النتيجة للـ subscribers
+
+retry logic
+
+تسجيل attempts
+
+actions/
+
+هنا أنواع المعالجة
+
+مثلاً:
+
+add-timestamp.action.ts
+
+يضيف وقت على payload
+
+filter-fields.action.ts
+
+يبقي فقط fields معينة
+
+transform-payload.action.ts
+
+يغير شكل البيانات
+
+هذا التقسيم ممتاز لأنه يجعل إضافة action جديدة سهلة.
+
+repositories/
+
+هنا التعامل مع قاعدة البيانات
+
+مثلاً:
+
+create pipeline
+
+create job
+
+update job status
+
+create delivery attempt
+
+ليش مفيد؟
+لأنه يمنع خلط DB queries مع business logic.
+
+lib/
+
+للأدوات الجاهزة المشتركة
+
+مثل:
+
+Prisma client
+
+Axios instance
+
+Logger
+
+middleware/
+
+أشياء تعمل بين request وresponse
+
+مثل:
+
+error handler
+
+validate request body
+
+schemas/
+
+هنا Zod schemas
+
+مثلاً:
+
+schema لإنشاء pipeline
+
+schema لتحديث pipeline
+
+types/
+
+إذا عندك أنواع مخصصة
+أو enums
+أو interfaces إضافية
+
+utils/
+
+دوال مساعدة صغيرة
+
+مثل:
+
+sleep
+
+retry helpers
+
+parsing helpers
+
+prisma/
+
+خاص بقاعدة البيانات
+
+schema.prisma
+
+تعريف الجداول والعلاقات
+
+tests/
+
+للاختبارات
+
+حتى لو تعمل 3 أو 4 اختبارات فقط، هذا يعطي انطباع ممتاز.
+
+docker/
+
+ملفات docker لكل service
+
+مثلاً:
+
+Dockerfile للـ API
+
+Dockerfile للـ Worker
+----------------------------------
+

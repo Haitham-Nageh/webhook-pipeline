@@ -1,0 +1,39 @@
+src/
+├── api/
+│   ├── pipelines.ts
+│   ├── webhooks.ts
+│   └── jobs.ts
+│
+├── worker/
+│   ├── processor.ts
+│   ├── delivery.ts
+│   └── index.ts
+│
+├── actions/
+│   ├── metadata-enrichment.ts
+│   ├── sensitive-field-redaction.ts
+│   ├── event-annotation.ts
+│   └── index.ts
+│
+├── lib/
+│   ├── prisma.ts
+│   ├── axios.ts
+│   └── logger.ts
+│
+├── schemas/
+│   ├── pipeline.schema.ts
+│   ├── webhook.schema.ts
+│   └── job.schema.ts
+│
+├── types/
+│   ├── pipeline.ts
+│   ├── job.ts
+│   └── common.ts
+│
+├── utils/
+│   ├── retry.ts
+│   └── sleep.ts
+│
+├── app.ts
+├── server.ts
+└── worker.ts

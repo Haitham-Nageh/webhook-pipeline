@@ -1,0 +1,133 @@
+1) Add Metadata
+
+بدل بس timestamp، نخليها أغنى شوي:
+
+يضيف:
+
+processedAt
+
+pipelineId
+
+jobId
+
+مثال:
+
+{
+  "name": "Ali"
+}
+
+تصير:
+
+{
+  "name": "Ali",
+  "processedAt": "2026-03-07T12:00:00Z",
+  "pipelineId": "pl_123",
+  "jobId": "job_456"
+}
+-----------------------------------------------------------
+2) Filter / Redact Sensitive Fields
+
+هاي قوية جدًا ومش مجرد “حذف حقول”.
+
+الفكرة:
+تحذف أو تخفي الحقول الحساسة مثل:
+
+password
+
+token
+
+creditCard
+
+ssn
+
+مثال:
+
+{
+  "name": "Ali",
+  "email": "ali@test.com",
+  "password": "123456",
+  "token": "abc123"
+}
+
+تصير:
+
+{
+  "name": "Ali",
+  "email": "ali@test.com",
+  "password": "[REDACTED]",
+  "token": "[REDACTED]"
+}
+
+هاي فكرة ممتازة جدًا لأنك تقدر تشرحها كـ:
+
+حماية بيانات قبل إرسالها إلى subscribers
+
+وهذا يعطي المشروع طابع عملي أكثر.
+--------------------------------------------------------------
+3) AI-ish / Fun Creative Action
+
+هون نحط لمستك الخاصة، لكن بدون تعقيد كبير.
+Joke / Meme Caption Generator
+
+هاي قريبة من فكرتك لكن بشكل آمن وبسيط.
+
+مو ميم حقيقي بصورة، بل:
+
+تضيف funMessage
+
+أو mood
+
+أو caption
+
+مثال:
+
+{
+  "eventType": "build_failed",
+  "service": "payments-api"
+}
+
+تصير:
+
+{
+  "eventType": "build_failed",
+  "service": "payments-api",
+  "funMessage": "Oops. The build tripped over its own shoelaces.",
+  "mood": "warning"
+}
+
+أو:
+
+{
+  "eventType": "deployment_success"
+}
+
+تصير:
+
+{
+  "eventType": "deployment_success",
+  "funMessage": "Deployment landed safely. No fires detected.",
+  "mood": "success"
+}
+
+هاي جميلة جدًا بالديمو، لأنها تعطي المشروع شخصية.
+
+لكن سميها بشكل احترافي، مثل:
+
+event_enrichment
+
+message_annotation
+
+smart_labeling
+
+بدل “joke action” فقط.
+-------------------------------------
+Processing Actions النهائية
+
+metadata_enrichment
+يضيف معلومات مثل processedAt وjobId
+
+sensitive_field_redaction
+يخفي أو يحذف الحقول الحساسة
+
+event_annotation
+يضيف رسالة ذكية / وصف / tag / fun message حسب نوع الحدث

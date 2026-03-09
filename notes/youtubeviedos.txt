@@ -1,0 +1,3 @@
+كورس Prisma الشامل مع PostgresQL & Express في ساعة واحده
+https://www.youtube.com/watch?v=KoFgG7Rjhbc
+---
