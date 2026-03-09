@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProcessingType {
+  metadata_enrichment
+  sensitive_field_redaction
+  event_annotation
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum DeliveryStatus {
+  SUCCESS
+  FAILED
+}
+
+model Pipeline {
+  id             String         @id @default(uuid())
+  name           String
+  sourceKey      String         @unique
+  processingType ProcessingType
+  config         Json?
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  subscribers    Subscriber[]
+  jobs           Job[]
+}
+
+model Subscriber {
+  id               String            @id @default(uuid())
+  pipelineId       String
+  targetUrl        String
+  createdAt        DateTime          @default(now())
+
+  pipeline         Pipeline          @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  deliveryAttempts DeliveryAttempt[]
+
+  @@index([pipelineId])
+}
+
+model Job {
+  id               String     @id @default(uuid())
+  pipelineId       String
+  payload          Json
+  processedPayload Json?
+  status           JobStatus  @default(PENDING)
+  errorMessage     String?
+  createdAt        DateTime   @default(now())
+  startedAt        DateTime?
+  completedAt      DateTime?
+  updatedAt        DateTime   @updatedAt
+
+  pipeline         Pipeline          @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  deliveryAttempts DeliveryAttempt[]
+
+  @@index([pipelineId])
+  @@index([status])
+}
+
+model DeliveryAttempt {
+  id             String         @id @default(uuid())
+  jobId          String
+  subscriberId   String
+  attemptNumber  Int
+  status         DeliveryStatus
+  responseStatus Int?
+  errorMessage   String?
+  attemptedAt    DateTime       @default(now())
+  nextRetryAt    DateTime?
+
+  job        Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  subscriber Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([subscriberId])
+}
