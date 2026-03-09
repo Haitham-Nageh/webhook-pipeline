@@ -11,11 +11,23 @@ export interface PaginationQuery {
   limit?: number
 }
 
-export type ProcessingType =
-  | 'metadata_enrichment'
-  | 'sensitive_field_redaction'
-  | 'event_annotation'
+export const PROCESSING_TYPES = [
+  'metadata_enrichment',
+  'sensitive_field_redaction',
+  'event_annotation',
+] as const
 
-export type JobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
+export type ProcessingType = (typeof PROCESSING_TYPES)[number]
 
-export type DeliveryStatus = 'SUCCESS' | 'FAILED'
+export const JOB_STATUSES = [
+  'PENDING',
+  'PROCESSING',
+  'COMPLETED',
+  'FAILED',
+] as const
+
+export type JobStatus = (typeof JOB_STATUSES)[number]
+
+export const DELIVERY_STATUSES = ['SUCCESS', 'FAILED'] as const
+
+export type DeliveryStatus = (typeof DELIVERY_STATUSES)[number]
