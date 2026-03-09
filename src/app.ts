@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import { logger } from './lib/logger'
-
+import { pipelinesRouter } from './api/pipelines'
 const app = express()
 
 app.use(express.json())
@@ -14,7 +14,7 @@ app.use((req, _res, next) => {
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
-
+app.use('/pipelines', pipelinesRouter)
 // routes will be added here later
 // app.use('/pipelines', pipelinesRouter)
 // app.use('/webhooks', webhooksRouter)
