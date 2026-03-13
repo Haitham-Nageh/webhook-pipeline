@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response } from 'express'
 import { logger } from './lib/logger'
 import { pipelinesRouter } from './api/pipelines'
 import { webhooksRouter } from './api/webhooks'
+import { jobsRouter } from './api/jobs'
+
 const app = express()
 
 app.use(express.json())
@@ -15,12 +17,10 @@ app.use((req, _res, next) => {
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
+
 app.use('/pipelines', pipelinesRouter)
 app.use('/webhooks', webhooksRouter)
-// routes will be added here later
-// app.use('/pipelines', pipelinesRouter)
-// app.use('/webhooks', webhooksRouter)
-// app.use('/jobs', jobsRouter)
+app.use('/jobs', jobsRouter)
 
 app.use((_req, res) => {
   res.status(404).json({
@@ -30,7 +30,7 @@ app.use((_req, res) => {
 })
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  logger.error({ error: err.message, stack: err.stack }, 'Unhandled error')
+  logger.error({ err }, 'Unhandled error')
 
   res.status(500).json({
     success: false,
