@@ -9,6 +9,44 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d webhook_pipeline"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/webhook_pipeline
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["npx", "prisma", "migrate", "deploy"]
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/webhook_pipeline
+      NODE_ENV: production
+      PORT: 3000
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: node dist/server.js
+
+  worker:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/webhook_pipeline
+      NODE_ENV: production
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: node dist/worker.js
 
 volumes:
   postgres_data:
