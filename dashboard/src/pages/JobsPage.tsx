@@ -103,7 +103,6 @@ export default function JobsPage() {
                 <th className="text-left px-6 py-3 text-xs text-gray-400 font-medium">Created</th>
                 <th className="text-left px-6 py-3 text-xs text-gray-400 font-medium">Completed</th>
                 <th className="text-right px-6 py-3 text-xs text-gray-400 font-medium"></th>
-                <td className="px-6 py-3 text-right"></td>
               </tr>
             </thead>
             <tbody>
