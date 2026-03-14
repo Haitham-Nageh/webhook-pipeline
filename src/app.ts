@@ -4,9 +4,13 @@ import { pipelinesRouter } from './api/pipelines'
 import { webhooksRouter } from './api/webhooks'
 import { jobsRouter } from './api/jobs'
 import { apiLimiter, webhookLimiter } from './middleware/rateLimiter'
-
+import cors from 'cors'
 const app = express()
-
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}))
 app.set('trust proxy', 1)  
 
 app.use(express.json())
