@@ -274,7 +274,20 @@ A React dashboard at `http://localhost:5173` that fully replaces manual API test
 - Inspect processed payloads and delivery attempts
 
 ---
+## Architecture Diagrams
 
+### Entity Relationship Diagram
+![ERD](assets/erd.png)
+
+### Job Lifecycle
+![Job Lifecycle](assets/job-lifecycle.png)
+
+### System Architecture
+![Architecture](assets/architecture.png)
+
+### Tech Stack
+![Tech Stack](assets/tech-stack.png)
+---
 ## Design Decisions
 
 **DB polling instead of a message queue**
