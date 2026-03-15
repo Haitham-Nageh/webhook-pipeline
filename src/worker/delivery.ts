@@ -7,7 +7,7 @@ const MAX_ATTEMPTS = 4
 
 // Delay in minutes between retries: 1 min → 5 min → 30 min
 // This is a simple exponential backoff strategy
-const RETRY_DELAYS = [1, 5, 30]
+const RETRY_DELAYS = [1, 5, 10]
 
 const sleep = (minutes: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, minutes * 60 * 1000))

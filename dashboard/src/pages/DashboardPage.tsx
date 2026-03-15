@@ -7,26 +7,27 @@ import StatusBadge from '../components/StatusBadge'
 
 export default function DashboardPage() {
   const [pipelines, setPipelines] = useState<Pipeline[]>([])
-  const [jobs, setJobs] = useState<Job[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-useEffect(() => {
-  const load = async () => {
-    try {
-      const [p, j] = await Promise.all([
-        getPipelines(),
-        getJobs({ limit: 10 }),
-      ])
-      setPipelines(p)
-      setJobs(j.jobs)
-    } catch {
-      setError('Failed to load dashboard data')
-    } finally {
-      setLoading(false)
+  const [jobs, setJobs]           = useState<Job[]>([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState('')
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [p, j] = await Promise.all([
+          getPipelines(),
+          getJobs({ limit: 10 }),
+        ])
+        setPipelines(p)
+        setJobs(j.jobs)
+      } catch {
+        setError('Failed to load dashboard data')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
-  void load()
-}, [])
+    void load()
+  }, [])
 
   const stats = {
     total:      pipelines.length,
@@ -40,64 +41,75 @@ useEffect(() => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-gray-400">Loading...</p>
+        <p className="text-gray-500 text-sm">Loading...</p>
       </div>
     )
   }
-if (error) {
+
+  if (error) {
+    return (
+      <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg text-sm">
+        {error}
+      </div>
+    )
+  }
+
   return (
-    <div className="bg-red-500/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm">
-      ❌ {error}
-    </div>
-  )
-}
-  return (
-    
     <div className="space-y-8">
+
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-gray-400 mt-1">Overview of your webhook pipeline</p>
+        <h1 className="text-xl font-semibold text-white">Dashboard</h1>
+        <p className="text-sm text-gray-500 mt-1">Overview of your webhook pipeline</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label="Total Pipelines"  value={stats.total}      icon="⚡" />
-        <StatCard label="Active Pipelines" value={stats.active}     icon="✅" color="text-green-400" />
-        <StatCard label="Completed Jobs"   value={stats.completed}  icon="📦" color="text-green-400" />
-        <StatCard label="Failed Jobs"      value={stats.failed}     icon="❌" color="text-red-400" />
-        <StatCard label="Pending Jobs"     value={stats.pending}    icon="⏳" color="text-yellow-400" />
-        <StatCard label="Processing Jobs"  value={stats.processing} icon="⚙️" color="text-blue-400" />
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+        <StatCard label="Total Pipelines"  value={stats.total} />
+        <StatCard label="Active Pipelines" value={stats.active}     accent="green" />
+        <StatCard label="Completed Jobs"   value={stats.completed}  accent="green" />
+        <StatCard label="Failed Jobs"      value={stats.failed}     accent="red" />
+        <StatCard label="Pending Jobs"     value={stats.pending}    accent="yellow" />
+        <StatCard label="Processing Jobs"  value={stats.processing} accent="blue" />
       </div>
 
-      {/* Recent Jobs */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+      {/* Recent jobs table */}
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-white">Recent Jobs</h2>
-          <Link to="/jobs" className="text-sm text-indigo-400 hover:text-indigo-300">
-            View all →
+          <h2 className="text-sm font-semibold text-white">Recent Jobs</h2>
+          <Link
+            to="/jobs"
+            className="text-xs text-gray-400 hover:text-white transition-colors"
+          >
+            View all
           </Link>
         </div>
 
         {jobs.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No jobs yet — send a webhook to get started
+          <div className="px-6 py-12 text-center text-gray-600 text-sm">
+            No jobs yet. Send a webhook to get started.
           </div>
         ) : (
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
-                <th className="text-left px-6 py-3 text-xs text-gray-400 font-medium">Job ID</th>
-                <th className="text-left px-6 py-3 text-xs text-gray-400 font-medium">Pipeline</th>
-                <th className="text-left px-6 py-3 text-xs text-gray-400 font-medium">Status</th>
-                <th className="text-left px-6 py-3 text-xs text-gray-400 font-medium">Created</th>
+                <th className="text-left px-6 py-3 text-xs text-gray-500 font-medium">Job ID</th>
+                <th className="text-left px-6 py-3 text-xs text-gray-500 font-medium">Pipeline</th>
+                <th className="text-left px-6 py-3 text-xs text-gray-500 font-medium">Status</th>
+                <th className="text-left px-6 py-3 text-xs text-gray-500 font-medium">Created</th>
               </tr>
             </thead>
             <tbody>
               {jobs.map(job => (
-                <tr key={job.id} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                <tr
+                  key={job.id}
+                  className="border-b border-gray-800/50 hover:bg-gray-800/20 transition-colors"
+                >
                   <td className="px-6 py-3">
-                    <Link to={`/jobs/${job.id}`} className="text-indigo-400 hover:text-indigo-300 font-mono text-xs">
+                    <Link
+                      to={`/jobs/${job.id}`}
+                      className="font-mono text-xs text-blue-400 hover:text-blue-300"
+                    >
                       {job.id.slice(0, 8)}...
                     </Link>
                   </td>
@@ -107,7 +119,7 @@ if (error) {
                   <td className="px-6 py-3">
                     <StatusBadge status={job.status} />
                   </td>
-                  <td className="px-6 py-3 text-xs text-gray-400">
+                  <td className="px-6 py-3 text-xs text-gray-500">
                     {new Date(job.createdAt).toLocaleString()}
                   </td>
                 </tr>
@@ -116,6 +128,7 @@ if (error) {
           </table>
         )}
       </div>
+
     </div>
   )
 }
