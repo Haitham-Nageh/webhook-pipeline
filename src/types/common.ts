@@ -1,16 +1,25 @@
+// Shared types, constants, and enums used across the entire application.
+// Keeping them here avoids duplication between API, worker, and validation layers.
+
+// Alias for clarity — all IDs in this project are UUIDs
 export type UUID = string
 
+// Standard API response wrapper used by all endpoints
 export interface ApiResponse<T> {
   success: boolean
   data?: T
   error?: string
 }
 
+// Reusable pagination parameters for list endpoints
 export interface PaginationQuery {
   page?: number
   limit?: number
 }
 
+// Using "as const" arrays instead of enums so the same values
+// can be used in both TypeScript types and Zod validation schemas
+// without duplication
 export const PROCESSING_TYPES = [
   'metadata_enrichment',
   'sensitive_field_redaction',

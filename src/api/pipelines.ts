@@ -7,12 +7,18 @@ import {
   CreatePipelineSchema,
   UpdatePipelineSchema,
 } from '../schemas/pipeline.schema'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const toJson = (val: unknown): any => val
+
 export const pipelinesRouter = Router()
 
+// Generates a random 32-character hex string used as the pipeline's webhook URL key.
+// Example: /webhooks/a3f8c2d1e4b5a6f7c8d9e0f1a2b3c4d5
 const generateSourceKey = () => randomBytes(16).toString('hex')
 
 // ─── GET /pipelines ───────────────────────────────────────
+// Returns all pipelines ordered by creation date (newest first)
 pipelinesRouter.get('/', async (_req: Request, res: Response) => {
   try {
     const pipelines = await prisma.pipeline.findMany({
@@ -47,6 +53,8 @@ pipelinesRouter.get('/:id', async (req: Request, res: Response) => {
 })
 
 // ─── POST /pipelines ──────────────────────────────────────
+// Creates a pipeline with a unique sourceKey and one or more subscribers.
+// Subscribers are created in the same transaction via Prisma nested writes.
 pipelinesRouter.post('/', async (req: Request, res: Response) => {
   try {
     const result = CreatePipelineSchema.safeParse(req.body)
@@ -63,6 +71,7 @@ pipelinesRouter.post('/', async (req: Request, res: Response) => {
         name,
         sourceKey: generateSourceKey(),
         processingType,
+        // Prisma requires JsonNull for nullable JSON fields instead of null
         config: config !== undefined ? toJson(config) : Prisma.JsonNull,
         isActive: isActive ?? true,
         subscribers: {
@@ -73,6 +82,9 @@ pipelinesRouter.post('/', async (req: Request, res: Response) => {
     })
 
     logger.info({ pipelineId: pipeline.id }, 'Pipeline created')
+
+    // Include the full webhook URL in the response so the caller
+    // knows immediately where to send events
     res.status(201).json({
       success: true,
       data: {
@@ -87,6 +99,8 @@ pipelinesRouter.post('/', async (req: Request, res: Response) => {
 })
 
 // ─── PATCH /pipelines/:id ─────────────────────────────────
+// Partial update — only provided fields are changed.
+// Subscribers are not updated here to keep the operation simple.
 pipelinesRouter.patch('/:id', async (req: Request, res: Response) => {
   try {
     const result = UpdatePipelineSchema.safeParse(req.body)
@@ -105,16 +119,17 @@ pipelinesRouter.patch('/:id', async (req: Request, res: Response) => {
       return
     }
 
-const { config, ...rest } = result.data
+    // Separate config from the rest to handle JSON casting correctly
+    const { config, ...rest } = result.data
 
-const pipeline = await prisma.pipeline.update({
-  where: { id: req.params.id as string },
-  data: {
-    ...rest,
-    ...(config !== undefined && { config: toJson(config) }),
-  },
-  include: { subscribers: true },
-})
+    const pipeline = await prisma.pipeline.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(config !== undefined && { config: toJson(config) }),
+      },
+      include: { subscribers: true },
+    })
 
     logger.info({ pipelineId: pipeline.id }, 'Pipeline updated')
     res.json({ success: true, data: pipeline })
@@ -125,6 +140,8 @@ const pipeline = await prisma.pipeline.update({
 })
 
 // ─── DELETE /pipelines/:id ────────────────────────────────
+// Deleting a pipeline cascades to subscribers and jobs
+// because of the onDelete: Cascade set in the Prisma schema
 pipelinesRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
     const existing = await prisma.pipeline.findUnique({
