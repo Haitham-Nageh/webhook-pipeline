@@ -1,10 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
-import Layout from './components/Layout'
-import DashboardPage from './pages/DashboardPage'
-import PipelinesPage from './pages/PipelinesPage'
-import PipelinePage from './pages/PipelinePage'
-import JobsPage from './pages/JobsPage'
-import JobPage from './pages/JobPage'
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import DashboardPage from "./pages/DashboardPage";
+import PipelinesPage from "./pages/PipelinesPage";
+import PipelinePage from "./pages/PipelinePage";
+import JobsPage from "./pages/JobsPage";
+import JobPage from "./pages/JobPage";
 
 export default function App() {
   return (
@@ -17,5 +17,5 @@ export default function App() {
         <Route path="/jobs/:id" element={<JobPage />} />
       </Routes>
     </Layout>
-  )
+  );
 }

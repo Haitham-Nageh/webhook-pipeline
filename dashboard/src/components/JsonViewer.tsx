@@ -1,6 +1,6 @@
 interface JsonViewerProps {
-  data: unknown
-  title?: string
+  data: unknown;
+  title?: string;
 }
 
 export default function JsonViewer({ data, title }: JsonViewerProps) {
@@ -15,5 +15,5 @@ export default function JsonViewer({ data, title }: JsonViewerProps) {
         {JSON.stringify(data, null, 2)}
       </pre>
     </div>
-  )
+  );
 }
