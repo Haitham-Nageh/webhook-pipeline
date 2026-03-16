@@ -122,6 +122,12 @@ This starts three services:
 - `migrate` — runs Prisma migrations then exits
 - `api` — Express API on port 3000
 - `worker` — background job processor
+- `dashboard` — React dashboard on port 5173
+
+| Service | URL |
+|---|---|
+| API | http://localhost:3000 |
+| Dashboard | http://localhost:5173 |
 
 ### Run locally for development
 ```bash
@@ -239,8 +245,8 @@ COMPLETED  FAILED
 Failed deliveries are retried with increasing delays:
 ```
 Attempt 1 fails → wait 1 minute
-Attempt 2 fails → wait 3 minutes
-Attempt 3 fails → wait 10 minutes
+Attempt 2 fails → wait 2 minutes
+Attempt 3 fails → wait 3 minutes
 Attempt 4 fails → mark as dead, stop retrying
 ```
 
