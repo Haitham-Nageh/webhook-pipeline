@@ -12,20 +12,23 @@ const POLL_INTERVAL = 2000
  */
 const pollJobs = async (): Promise<void> => {
   try {
-    // Always pick the oldest pending job first (FIFO order)
     const job = await prisma.job.findFirst({
-      where: { status: 'PENDING' },
+      where: {
+        status: 'PENDING',
+      },
       orderBy: { createdAt: 'asc' },
     })
 
     if (job) {
       logger.info({ jobId: job.id }, 'Job picked up by worker')
-      await processJob(job.id)
+      // Don't await — let delivery run without blocking the poll loop
+      processJob(job.id).catch(err => {
+        logger.error({ err, jobId: job.id }, 'Unhandled error in processJob')
+      })
     }
   } catch (err) {
     logger.error({ err }, 'Worker poll error')
   } finally {
-    // Schedule the next poll regardless of success or failure
     setTimeout(pollJobs, POLL_INTERVAL)
   }
 }
